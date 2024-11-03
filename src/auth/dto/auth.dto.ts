@@ -7,3 +7,11 @@ export class AuthDto {
     @IsString()
     password?: string;
 }
+
+export class GoogleAuthDto {
+    @IsString()
+    email: string;
+
+    @IsString()
+    name: string;
+}
