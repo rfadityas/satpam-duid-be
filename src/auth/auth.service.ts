@@ -16,6 +16,10 @@ export class AuthService {
             throw new UnauthorizedException('Invalid credentials');
         }
 
+        if(user && user.provider === 'Google' && user.password === null) {
+            throw new UnauthorizedException('Invalid credentials');
+        }
+
         if (await compare(dto.password, user.password)) {
             const { password, ...dataUser } = user;
             const payload = { email: dataUser.email, id: dataUser.id };
@@ -26,8 +30,14 @@ export class AuthService {
             });
 
             return {
-                ...dataUser,
+               success: true,
+               message: 'Login successful',
+               data: {
+                id: dataUser.id,
+                email: dataUser.email,
+                name: dataUser.name,
                 access_token: accessToken,
+               }
             };
         }
 
@@ -54,8 +64,10 @@ export class AuthService {
                 expiresIn: '1d',
             });
 
+            const { password, ...dataUser } = newUser;
+
             return {
-                ...newUser,
+                ...dataUser,
                 access_token: accessToken,
             };
         }
@@ -67,8 +79,10 @@ export class AuthService {
             expiresIn: '1d',
         });
 
+        const { password, ...dataUser } = user;
+
         return {
-            ...user,
+            ...dataUser,
             access_token: accessToken,
         };
 
